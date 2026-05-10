@@ -10,28 +10,10 @@ def img2text(url):
 
 # text2story
 def text2story(text):
-    story_generator = pipeline(
-        "text2text-generation",
-        model="google/flan-t5-base"
-    )
-
-    prompt = (
-        "Write exactly 5 complete sentences for a children's story. "
-        "The story must have a beginning, a middle, and a happy ending. "
-        "Use simple English for children aged 3 to 10. "
-        "Do not describe the image in only one sentence. "
-        "Make the story creative and friendly. "
-        "Image description: " + text
-    )
-
-    story = story_generator(
-        prompt,
-        max_new_tokens=150,
-        min_length=80
-    )
-
+    story_generator = pipeline("text-generation", model="roneneldan/TinyStories-33M")
+    prompt = "Once upon a time, " + text + "."
+    story = story_generator(prompt, max_new_tokens=90, do_sample=True, temperature=0.8, top_p=0.9, repetition_penalty=1.3, no_repeat_ngram_size=3)
     story_text = story[0]["generated_text"]
-
     return story_text
 
 # text2audio
@@ -56,10 +38,15 @@ if uploaded_file is not None:
 
     if st.button("Generate Story"):
         scenario = img2text(uploaded_file.name)
+
         story = text2story(scenario)
+
         st.write(story)
 
         audio_data = text2audio(story)
+
         audio_array = audio_data["audio"]
+
         sample_rate = audio_data["sampling_rate"]
+
         st.audio(audio_array, sample_rate=sample_rate)
