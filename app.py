@@ -10,11 +10,24 @@ def img2text(url):
 
 # text2story
 def text2story(text):
-    story_generator = pipeline("text-generation", model="gpt2")
-    prompt = "Create a short children's story based on this image description: " + text + "\nStory:"
-    story = story_generator(prompt, max_new_tokens=100, do_sample=True, temperature=0.8, top_p=0.9, repetition_penalty=1.2, no_repeat_ngram_size=3)
+    story_generator = pipeline(
+        "text2text-generation",
+        model="google/flan-t5-base"
+    )
+
+    prompt = (
+        "Write a short and simple children's story in 5 sentences. "
+        "The story should be friendly and suitable for children. "
+        "Image description: " + text
+    )
+
+    story = story_generator(
+        prompt,
+        max_new_tokens=120
+    )
+
     story_text = story[0]["generated_text"]
-    story_text = story_text.replace(prompt, "").strip()
+
     return story_text
 
 # text2audio
