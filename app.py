@@ -16,14 +16,18 @@ def text2story(text):
     )
 
     prompt = (
-        "Write a short and simple children's story in 5 sentences. "
-        "The story should be friendly and suitable for children. "
+        "Write exactly 5 complete sentences for a children's story. "
+        "The story must have a beginning, a middle, and a happy ending. "
+        "Use simple English for children aged 3 to 10. "
+        "Do not describe the image in only one sentence. "
+        "Make the story creative and friendly. "
         "Image description: " + text
     )
 
     story = story_generator(
         prompt,
-        max_new_tokens=120
+        max_new_tokens=150,
+        min_length=80
     )
 
     story_text = story[0]["generated_text"]
